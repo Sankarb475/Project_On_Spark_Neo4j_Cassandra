@@ -21,9 +21,17 @@ object SparkNeo4j {
 
     val neo = Neo4j(sc)
 
+    //I am working with the famous movie dataset for now
+    
     //val rdd = neo.cypher("MATCH (n:Person) RETURN id(n) as id ").loadRowRdd
 
-    val rdd = neo.cypher("match(L:Person) return L.id").loadRowRdd
+    //val rdd = neo.cypher("match(L:Person) return L.id").loadRowRdd
+    
+    //Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Hanks
+    
+    val rdd = neo.cypher("MATCH (tom:Person {name:\"Tom Hanks\"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors)," +
+      "(coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors)\nWHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) " +
+      "AND tom <> cocoActors\nRETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC").loadRowRdd
 
     rdd.collect().foreach(println)
 
