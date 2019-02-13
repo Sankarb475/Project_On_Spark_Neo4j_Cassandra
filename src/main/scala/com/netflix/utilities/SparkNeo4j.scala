@@ -21,9 +21,11 @@ object SparkNeo4j {
 
     val neo = Neo4j(sc)
 
-    val rdd = neo.cypher("MATCH (n:Person) RETURN id(n) as id ").loadRowRdd
+    //val rdd = neo.cypher("MATCH (n:Person) RETURN id(n) as id ").loadRowRdd
 
-    //rdd.collect().foreach(println)
+    val rdd = neo.cypher("match(L:Person) return L.id").loadRowRdd
+
+    rdd.collect().foreach(println)
 
     print("other stuff")
     print(rdd.count)
